@@ -7,6 +7,7 @@
     state: "{{ container_state }}"
     volumes: "{{ zabbix_db_volumes }}"
     env: "{{ zabbix_db_env }}"
+  tags: zabbix-db
 
 - name: Set zabbix-server container to {{ container_state }}
   docker_container:
@@ -23,6 +24,7 @@
     links:
       - zabbix-db:zabbix-db
     env: "{{ zabbix_db_env | combine(zabbix_srv_env) }}"
+  tags: zabbix-server
 
 - name: Set zabbix-web container to {{ container_state }}
   docker_container:
@@ -38,6 +40,7 @@
       - zabbix-db:zabbix-db
       - zabbix-server:zabbix-server
     env: "{{ zabbix_db_env | combine(zabbix_web_env) }}"
+  tags: zabbix-web
 
 - name: Set zabbix-agent container to {{ container_state }}
   docker_container:
@@ -52,7 +55,9 @@
     env: "{{ zabbix_agent_env }}"
     privileged: true
     pid_mode: "host"
+  tags: zabbix-agent
 
 - name: Check if zabbix is up
   uri:
     url: "http://localhost"
+  when: container_state == 'started'
