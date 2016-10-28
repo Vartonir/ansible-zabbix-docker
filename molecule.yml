@@ -1,0 +1,18 @@
+---
+driver:
+  name: vagrant
+
+vagrant:
+  platforms:
+    - name: centos7
+      box: centos/7
+  providers:
+    - name: virtualbox
+      type: virtualbox
+  instances:
+    - name: ansible-zabbix-docker
+  raw_config_args:
+    - "vm.network 'forwarded_port', guest: 80, host: 8080"
+
+ansible:
+  requirements_file: requirements.yml

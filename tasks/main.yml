@@ -1,0 +1,58 @@
+---
+# tasks file for ansible-zabbix-docker
+- name: Set zabbix-db container to {{ container_state }}
+  docker_container:
+    name: zabbix-db
+    image: mysql:5.7
+    state: "{{ container_state }}"
+    volumes: "{{ zabbix_db_volumes }}"
+    env: "{{ zabbix_db_env }}"
+
+- name: Set zabbix-server container to {{ container_state }}
+  docker_container:
+    name: zabbix-server
+    image: zabbix/zabbix-server-mysql
+    state: "{{ container_state }}"
+    ulimits:
+      - nofile:20000:40000
+      - nproc:65535
+    memory: 512MB
+    ports:
+      - "10051:10051"
+    volumes: "{{ zabbix_shared_volumes | union(zabbix_server_volumes) }}"
+    links:
+      - zabbix-db:zabbix-db
+    env: "{{ zabbix_db_env | combine(zabbix_srv_env) }}"
+
+- name: Set zabbix-web container to {{ container_state }}
+  docker_container:
+    name: zabbix-web
+    image: zabbix/zabbix-web-nginx-mysql
+    state: "{{ container_state }}"
+    memory: 512MB
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes: "{{ zabbix_web_volumes }}"
+    links:
+      - zabbix-db:zabbix-db
+      - zabbix-server:zabbix-server
+    env: "{{ zabbix_db_env | combine(zabbix_web_env) }}"
+
+- name: Set zabbix-agent container to {{ container_state }}
+  docker_container:
+    name: zabbix-agent
+    image: zabbix/zabbix-agent
+    state: "{{ container_state }}"
+    ports:
+      - "10050:10050"
+    volumes: "{{ zabbix_shared_volumes | union(zabbix_agent_volumes) }}"
+    links:
+      - zabbix-server:zabbix-server
+    env: "{{ zabbix_agent_env }}"
+    privileged: true
+    pid_mode: "host"
+
+- name: Check if zabbix is up
+  uri:
+    url: "http://localhost"

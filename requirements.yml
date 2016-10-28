@@ -1,0 +1,2 @@
+- src: https://github.com/aliusmiles/ansible-pip.git
+- src: https://github.com/aliusmiles/ansible-docker.git

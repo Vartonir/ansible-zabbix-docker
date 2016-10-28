@@ -1,0 +1,9 @@
+---
+- hosts: all
+  roles:
+    - role: ansible-pip
+      tags: skip_ansible_lint
+    - role: ansible-docker
+      tags: skip_ansible_lint
+
+    - role: ansible-zabbix-docker

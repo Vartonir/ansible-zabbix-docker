@@ -1,0 +1,43 @@
+---
+# vars file for ansible-zabbix-docker
+zabbix_db_env:
+    DB_SERVER_HOST: zabbix-db
+    DB_SERVER_PORT: 3306
+    MYSQL_USER: "{{ zabbix_db_user }}"
+    MYSQL_PASSWORD: "{{ zabbix_db_password }}"
+    MYSQL_ROOT_PASSWORD: "{{ zabbix_mysql_root_password }}"
+    MYSQL_ALLOW_EMPTY_PASSWORD: "false"
+    MYSQL_DATABASE: "{{ zabbix_database }}"
+
+zabbix_srv_env:
+    ZBX_ENABLE_SNMP_TRAPS: "false"
+    ZBX_JAVAGATEWAY_ENABLE: "false"
+    ZBX_STARTJAVAPOLLERS: 0
+
+zabbix_web_env:
+    ZBX_SERVER_HOST: zabbix-server
+    ZBX_SERVER_NAME: "{{ zabbix_name }}"
+    TZ: "{{ zabbix_timezone }}"
+
+zabbix_agent_env:
+    ZBX_SERVER_HOST: zabbix-server
+
+zabbix_db_volumes:
+  - "{{ zabbix_data_path }}/var/lib/mysql:/var/lib/mysql:rw"
+
+zabbix_server_volumes:
+  - "{{ zabbix_data_path }}/usr/lib/zabbix/alertscripts:/usr/lib/zabbix/alertscripts:ro"
+  - "{{ zabbix_data_path }}/usr/lib/zabbix/externalscripts:/usr/lib/zabbix/externalscripts:ro"
+  - "{{ zabbix_data_path }}/var/lib/zabbix/mibs:/var/lib/zabbix/mibs:ro"
+
+zabbix_agent_volumes:
+  - "{{ zabbix_data_path }}/etc/zabbix/zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d:ro"
+
+zabbix_shared_volumes:
+  # zabbix master and agent
+  - "{{ zabbix_data_path }}/var/lib/zabbix/modules:/var/lib/zabbix/modules:ro"
+  - "{{ zabbix_data_path }}/var/lib/zabbix/enc:/var/lib/zabbix/enc:ro"
+  - "{{ zabbix_data_path }}/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro"
+
+zabbix_web_volumes:
+  - "{{ zabbix_data_path }}/etc/ssl/nginx:/etc/ssl/nginx:ro"
