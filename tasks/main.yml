@@ -1,6 +1,6 @@
 ---
 # tasks file for ansible-zabbix-docker
-- name: Set zabbix-db container to {{ container_state }}
+- name: Set zabbix-db state to {{ container_state }}
   docker_container:
     name: zabbix-db
     image: mysql:5.7
@@ -9,7 +9,7 @@
     env: "{{ zabbix_db_env }}"
   tags: zabbix-db
 
-- name: Set zabbix-server container to {{ container_state }}
+- name: Set zabbix-server state to {{ container_state }}
   docker_container:
     name: zabbix-server
     image: zabbix/zabbix-server-mysql
@@ -26,7 +26,7 @@
     env: "{{ zabbix_db_env | combine(zabbix_srv_env) }}"
   tags: zabbix-server
 
-- name: Set zabbix-web container to {{ container_state }}
+- name: Set zabbix-web state to {{ container_state }}
   docker_container:
     name: zabbix-web
     image: zabbix/zabbix-web-nginx-mysql
@@ -42,7 +42,7 @@
     env: "{{ zabbix_db_env | combine(zabbix_web_env) }}"
   tags: zabbix-web
 
-- name: Set zabbix-agent container to {{ container_state }}
+- name: Set zabbix-agent state to {{ container_state }}
   docker_container:
     name: zabbix-agent
     image: zabbix/zabbix-agent
