@@ -61,3 +61,7 @@
   uri:
     url: "http://localhost"
   when: container_state == 'started'
+  register: uri_result
+  until: uri_result.status == 200
+  retries: 10
+  tags: wait
