@@ -2,7 +2,7 @@ galaxy_info:
   author: Taras Bondarchuk
   description: Install Dockerized Zabbix server on Centos 7
   license: MIT
-  min_ansible_version: 2.1
+  min_ansible_version: 2.2
   platforms:
   - name: EL
     versions:
