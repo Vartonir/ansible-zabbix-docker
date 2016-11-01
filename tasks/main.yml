@@ -1,5 +1,14 @@
 ---
 # tasks file for ansible-zabbix-docker
+- name: Create zabbix network
+  docker_network:
+    name: zabbix_network
+    driver_options:
+      com.docker.network.enable_ipv6: "false"
+    ipam_options:
+      subnet: "{{ zabbix_subnet }}"
+      gateway: "{{ zabbix_gateway }}"
+
 - name: Set zabbix-db state to {{ container_state }}
   docker_container:
     name: zabbix-db
@@ -7,6 +16,13 @@
     state: "{{ container_state }}"
     volumes: "{{ zabbix_db_volumes }}"
     env: "{{ zabbix_db_env }}"
+    purge_networks: yes
+    networks:
+      - name: zabbix_network
+        aliases:
+          - mysql-server
+          - zabbix-database
+          - mysql-database
   tags: zabbix-db
 
 - name: Set zabbix-server state to {{ container_state }}
@@ -24,6 +40,12 @@
     links:
       - zabbix-db:zabbix-db
     env: "{{ zabbix_db_env | combine(zabbix_srv_env) }}"
+    purge_networks: yes
+    networks:
+      - name: zabbix_network
+        aliases:
+         - zabbix-server
+         - zabbix-server-mysql
   tags: zabbix-server
 
 - name: Set zabbix-web state to {{ container_state }}
@@ -40,6 +62,11 @@
       - zabbix-db:zabbix-db
       - zabbix-server:zabbix-server
     env: "{{ zabbix_db_env | combine(zabbix_web_env) }}"
+    purge_networks: yes
+    networks:
+      - name: zabbix_network
+        aliases:
+         - zabbix-web-nginx-mysql
   tags: zabbix-web
 
 - name: Set zabbix-agent state to {{ container_state }}
@@ -55,6 +82,12 @@
     env: "{{ zabbix_agent_env }}"
     privileged: true
     pid_mode: "host"
+    purge_networks: yes
+    networks:
+      - name: zabbix_network
+        aliases:
+         - zabbix-agent
+         - zabbix-agent-passive
   tags: zabbix-agent
 
 - name: Check if zabbix is up

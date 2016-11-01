@@ -10,3 +10,6 @@ zabbix_database: zabbix
 zabbix_db_user: zabbix
 zabbix_db_password: zabbix
 zabbix_mysql_root_password: root_pw
+
+zabbix_subnet: "172.16.238.0/24"
+zabbix_gateway: "172.16.238.1"

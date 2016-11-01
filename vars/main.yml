@@ -1,8 +1,6 @@
 ---
 # vars file for ansible-zabbix-docker
 zabbix_db_env:
-    DB_SERVER_HOST: zabbix-db
-    DB_SERVER_PORT: 3306
     MYSQL_USER: "{{ zabbix_db_user }}"
     MYSQL_PASSWORD: "{{ zabbix_db_password }}"
     MYSQL_ROOT_PASSWORD: "{{ zabbix_mysql_root_password }}"
@@ -21,6 +19,8 @@ zabbix_web_env:
 
 zabbix_agent_env:
     ZBX_SERVER_HOST: zabbix-server
+    ZBX_PASSIVE_ALLOW: "true"
+    ZBX_ACTIVE_ALLOW: "false"
 
 zabbix_db_volumes:
   - "{{ zabbix_data_path }}/var/lib/mysql:/var/lib/mysql:rw"
