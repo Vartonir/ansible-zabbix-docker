@@ -9,6 +9,4 @@ galaxy_info:
     - 7
   galaxy_tags: []
 
-dependencies:
-  - ansible-pip
-  - ansible-docker
+dependencies: []
