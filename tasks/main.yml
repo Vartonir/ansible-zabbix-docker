@@ -6,16 +6,16 @@
     driver_options:
       com.docker.network.enable_ipv6: "false"
     ipam_options:
-      subnet: "{{ zabbix_subnet }}"
-      gateway: "{{ zabbix_gateway }}"
+      subnet: "{{ zabbix.subnet }}"
+      gateway: "{{ zabbix.gateway }}"
 
 - name: Set zabbix-db state to {{ container_state }}
   docker_container:
     name: zabbix-db
     image: mysql:5.7
     state: "{{ container_state }}"
-    volumes: "{{ zabbix_db_volumes }}"
-    env: "{{ zabbix_db_env }}"
+    volumes: "{{ zabbix_volumes.database }}"
+    env: "{{ zabbix_env.database }}"
     purge_networks: yes
     networks:
       - name: zabbix_network
@@ -36,10 +36,10 @@
     memory: 512MB
     ports:
       - "10051:10051"
-    volumes: "{{ zabbix_shared_volumes | union(zabbix_server_volumes) }}"
+    volumes: "{{ zabbix_volumes.shared | union(zabbix_volumes.server) }}"
     links:
       - zabbix-db:zabbix-db
-    env: "{{ zabbix_db_env | combine(zabbix_srv_env) }}"
+    env: "{{ zabbix_env.database | combine(zabbix_env.server) }}"
     purge_networks: yes
     networks:
       - name: zabbix_network
@@ -57,11 +57,11 @@
     ports:
       - "80:80"
       - "443:443"
-    volumes: "{{ zabbix_web_volumes }}"
+    volumes: "{{ zabbix_volumes.web }}"
     links:
       - zabbix-db:zabbix-db
       - zabbix-server:zabbix-server
-    env: "{{ zabbix_db_env | combine(zabbix_web_env) }}"
+    env: "{{ zabbix_env.database | combine(zabbix_env.web) }}"
     purge_networks: yes
     networks:
       - name: zabbix_network
@@ -76,10 +76,10 @@
     state: "{{ container_state }}"
     ports:
       - "10050:10050"
-    volumes: "{{ zabbix_shared_volumes | union(zabbix_agent_volumes) }}"
+    volumes: "{{ zabbix_volumes.shared | union(zabbix_volumes.agent) }}"
     links:
       - zabbix-server:zabbix-server
-    env: "{{ zabbix_agent_env }}"
+    env: "{{ zabbix_env.agent }}"
     privileged: true
     pid_mode: "host"
     purge_networks: yes
@@ -97,4 +97,4 @@
   register: uri_result
   until: uri_result.status == 200
   retries: 10
-  tags: wait
+  check_mode: no

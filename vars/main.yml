@@ -1,43 +1,38 @@
 ---
 # vars file for ansible-zabbix-docker
-zabbix_db_env:
-    MYSQL_USER: "{{ zabbix_db_user }}"
-    MYSQL_PASSWORD: "{{ zabbix_db_password }}"
-    MYSQL_ROOT_PASSWORD: "{{ zabbix_mysql_root_password }}"
+zabbix_env:
+  database:
+    MYSQL_USER: "{{ zabbix.db_user }}"
+    MYSQL_PASSWORD: "{{ zabbix.db_password }}"
+    MYSQL_ROOT_PASSWORD: "{{ zabbix.mysql_root_password }}"
     MYSQL_ALLOW_EMPTY_PASSWORD: "false"
-    MYSQL_DATABASE: "{{ zabbix_database }}"
-
-zabbix_srv_env:
+    MYSQL_DATABASE: "{{ zabbix.database }}"
+  server:
     ZBX_ENABLE_SNMP_TRAPS: "false"
     ZBX_JAVAGATEWAY_ENABLE: "false"
     ZBX_STARTJAVAPOLLERS: 0
-
-zabbix_web_env:
+  web:
     ZBX_SERVER_HOST: zabbix-server
-    ZBX_SERVER_NAME: "{{ zabbix_name }}"
-    TZ: "{{ zabbix_timezone }}"
-
-zabbix_agent_env:
+    ZBX_SERVER_NAME: "{{ zabbix.name }}"
+    TZ: "{{ zabbix.timezone }}"
+  agent:
     ZBX_SERVER_HOST: zabbix-server
     ZBX_PASSIVE_ALLOW: "true"
     ZBX_ACTIVE_ALLOW: "false"
 
-zabbix_db_volumes:
-  - "{{ zabbix_data_path }}/var/lib/mysql:/var/lib/mysql:rw"
-
-zabbix_server_volumes:
-  - "{{ zabbix_data_path }}/usr/lib/zabbix/alertscripts:/usr/lib/zabbix/alertscripts:ro"
-  - "{{ zabbix_data_path }}/usr/lib/zabbix/externalscripts:/usr/lib/zabbix/externalscripts:ro"
-  - "{{ zabbix_data_path }}/var/lib/zabbix/mibs:/var/lib/zabbix/mibs:ro"
-
-zabbix_agent_volumes:
-  - "{{ zabbix_data_path }}/etc/zabbix/zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d:ro"
-
-zabbix_shared_volumes:
-  # zabbix master and agent
-  - "{{ zabbix_data_path }}/var/lib/zabbix/modules:/var/lib/zabbix/modules:ro"
-  - "{{ zabbix_data_path }}/var/lib/zabbix/enc:/var/lib/zabbix/enc:ro"
-  - "{{ zabbix_data_path }}/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro"
-
-zabbix_web_volumes:
-  - "{{ zabbix_data_path }}/etc/ssl/nginx:/etc/ssl/nginx:ro"
+zabbix_volumes:
+  database:
+    - "{{ zabbix.data_path }}/var/lib/mysql:/var/lib/mysql:rw"
+  server:
+    - "{{ zabbix.data_path }}/usr/lib/zabbix/alertscripts:/usr/lib/zabbix/alertscripts:ro"
+    - "{{ zabbix.data_path }}/usr/lib/zabbix/externalscripts:/usr/lib/zabbix/externalscripts:ro"
+    - "{{ zabbix.data_path }}/var/lib/zabbix/mibs:/var/lib/zabbix/mibs:ro"
+  agent:
+    - "{{ zabbix.data_path }}/etc/zabbix/zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d:ro"
+  shared:
+    # zabbix master and agent
+    - "{{ zabbix.data_path }}/var/lib/zabbix/modules:/var/lib/zabbix/modules:ro"
+    - "{{ zabbix.data_path }}/var/lib/zabbix/enc:/var/lib/zabbix/enc:ro"
+    - "{{ zabbix.data_path }}/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro"
+  web:
+    - "{{ zabbix.data_path }}/etc/ssl/nginx:/etc/ssl/nginx:ro"

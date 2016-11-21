@@ -1,15 +1,14 @@
 ---
 # defaults file for ansible-zabbix-docker
 container_state: "started"
-zabbix_data_path: "/srv/zabbix"
 
-zabbix_name: "Zabbix Server"
-zabbix_timezone: "Etc/GMT"
-
-zabbix_database: zabbix
-zabbix_db_user: zabbix
-zabbix_db_password: zabbix
-zabbix_mysql_root_password: root_pw
-
-zabbix_subnet: "172.16.238.0/24"
-zabbix_gateway: "172.16.238.1"
+zabbix:
+  data_path: "/srv/zabbix"
+  name: "Zabbix Server"
+  timezone: "Etc/GMT"
+  database: zabbix
+  db_user: zabbix
+  db_password: zabbix
+  mysql_root_password: root_pw
+  subnet: "172.16.238.0/24"
+  gateway: "172.16.238.1"
