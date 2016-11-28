@@ -14,5 +14,6 @@ vagrant:
   raw_config_args:
     - "vm.network 'forwarded_port', guest: 80, host: 8080"
 
-ansible:
+dependency:
+  name: galaxy
   requirements_file: requirements.yml
